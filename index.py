@@ -80,6 +80,8 @@ class Node:
                 return row[ROAD_NAME], row[ROAD_TYPE], row[TRAFFIC]
 
 
+
+
 def calculate_intersection_points(rows):
     list_of_nodes = []
     for i in range(len(rows)):
@@ -140,7 +142,19 @@ def read_map(filename):
             rows.append(row)
     return rows
 
+def read_JSON(filename, list_of_nodes):
+    with open(filename  + '.json', 'r') as jsonfile:
+        origin_to_destination = json.load(jsonfile)
+    start_point = Node(origin_to_destination['START']['X'], origin_to_destination['START']['Y'])
+    end_point = Node(origin_to_destination['END']['X'], origin_to_destination['END']['Y'])
 
+    for node in list_of_nodes:
+        if node.x == start_point.x and node.y == start_point.y:
+            start_point = node
+        if node.x == end_point.x and node.y == end_point.y:
+            end_point = node
+
+    return start_point, end_point
 
 
 if __name__ == '__main__':
@@ -148,8 +162,7 @@ if __name__ == '__main__':
     csv_file = input('enter the CSV file please:')
     json_file = input('enter the JSON file please:')
     rows = read_map(csv_file)
-
-
-
+    list_of_nodes = calculate_intersection_points(rows)
+    start_point, end_point = read_JSON(json_file, list_of_nodes)
 
     
