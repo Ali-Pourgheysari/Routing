@@ -81,6 +81,54 @@ class Node:
 
 
 
+# A* algorithm to find the shortest path between two points considering traffic
+def a_star(current: Node, end):
+    open_list = [(0, current)]
+    closed_list = set()
+    g_score = {current: 0}
+    f_score = {current: heuristic(current, end)}
+    path = {current: None}
+
+    while open_list:
+        f, current = heapq.heappop(open_list)
+        if current == end:
+            return reconstruct_path(path, current)
+        
+        closed_list.add(current)
+
+        # Check all neighbors of the current node
+        for neighbor_node in current.neighbors:
+            # Ignore neighbors that have already been evaluated
+            if neighbor_node[0] in closed_list:
+                continue
+
+            # Calculate the tentative g-score for this neighbor
+            tentative_g_score = g_score[current] + current.g_score(neighbor_node)
+
+            # Check if this is the best path so far
+            if neighbor_node[0] not in g_score or tentative_g_score < g_score[neighbor_node[0]]:
+                # Update the g-score and f-score for this neighbor
+                g_score[neighbor_node[0]] = tentative_g_score
+                f_score[neighbor_node[0]] = tentative_g_score + heuristic(Node(neighbor_node[0].x, neighbor_node[0].y), end)
+                path[neighbor_node[0]] = current
+
+                # Add this neighbor to the open list
+                heapq.heappush(open_list, (f_score[neighbor_node[0]], neighbor_node[0]))
+
+    # If we get here, there is no path
+    return None    
+
+def reconstruct_path(path, current):
+    total_path = [current]
+    while current in path and path[current]:
+        current = path[current]
+        total_path.append(current)
+    return total_path[::-1]
+
+# The heuristic function should calculate the distance, priority of the type of the roads, and the traffic of the road
+def heuristic(start, end: Node):
+    return start.get_distance(end)
+    
 
 def calculate_intersection_points(rows):
     list_of_nodes = []
@@ -156,6 +204,19 @@ def read_JSON(filename, list_of_nodes):
 
     return start_point, end_point
 
+def print_path(path, csv_file, json_file, student_number):
+    # create txt file and write the path
+    if path == None:
+        print('No path found')
+        return
+    with open(f'{csv_file}_{json_file}_{student_number}.txt', 'w') as txtfile:
+        for i, node in enumerate(path):
+            next = path[i + 1] if i + 1 < len(path) else None
+            if next == None:
+                break
+            path_name = node.get_path_name(next)
+            txtfile.write(f'{path_name} ({node.x}, {node.y}) -> ({next.x}, {next.y})\r')
+
 
 if __name__ == '__main__':
     student_number = '993613014'
@@ -165,4 +226,6 @@ if __name__ == '__main__':
     list_of_nodes = calculate_intersection_points(rows)
     start_point, end_point = read_JSON(json_file, list_of_nodes)
 
+    path = a_star(start_point, end_point)
+    print_path(path, csv_file, json_file, student_number)
     
