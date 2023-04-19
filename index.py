@@ -209,7 +209,7 @@ def print_path(path, csv_file, json_file, student_number):
     if path == None:
         print('No path found')
         return
-    with open(f'{csv_file}_{json_file}_{student_number}.txt', 'w') as txtfile:
+    with open('output.txt', 'w') as txtfile:
         for i, node in enumerate(path):
             next = path[i + 1] if i + 1 < len(path) else None
             if next == None:
@@ -219,7 +219,6 @@ def print_path(path, csv_file, json_file, student_number):
 
 
 if __name__ == '__main__':
-    student_number = '993613014'
     csv_file = input('enter the CSV file please:')
     json_file = input('enter the JSON file please:')
     rows = read_map(csv_file)
@@ -227,5 +226,5 @@ if __name__ == '__main__':
     start_point, end_point = read_JSON(json_file, list_of_nodes)
 
     path = a_star(start_point, end_point)
-    print_path(path, csv_file, json_file, student_number)
+    print_path(path)
     
