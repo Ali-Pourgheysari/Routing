@@ -1,2 +1,2 @@
 # Routing
- find the shortest path from between 2 points
+ find the shortest path between 2 points
