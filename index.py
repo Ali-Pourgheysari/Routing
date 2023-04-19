@@ -80,4 +80,76 @@ class Node:
                 return row[ROAD_NAME], row[ROAD_TYPE], row[TRAFFIC]
 
 
+def calculate_intersection_points(rows):
+    list_of_nodes = []
+    for i in range(len(rows)):
+        for j in range(i + 1, len(rows)):
+            ith = rows[i]
+            jth = rows[j]
+            x1 = float(ith[START_X])
+            y1 = float(ith[START_Y])
+            x2 = float(ith[END_X])
+            y2 = float(ith[END_Y])
+            x3 = float(jth[START_X])
+            y3 = float(jth[START_Y])
+            x4 = float(jth[END_X])
+            y4 = float(jth[END_Y])
 
+            if (y4 - y3) * (x2 - x1) == (y2 - y1) * (x4 - x3):
+                continue
+
+            if x1 == 5 and y1 == 5 and y4 == 4.25:
+                n = 4
+
+            x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+            y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+
+            if (x1 <= x <= x2 or x2 <= x <= x1) and (y1 <= y <= y2 or y2 <= y <= y1) and (x3 <= x <= x4 or x4 <= x <= x3) and (y3 <= y <= y4 or y4 <= y <= y3):
+
+                if not any(node.x == x and node.y == y for node in list_of_nodes):
+                    list_of_nodes.append(Node(x, y))
+            
+    for row in rows:
+
+        if not any(node.x == float(row[START_X]) and node.y == float(row[START_Y]) for node in list_of_nodes):
+            list_of_nodes.append(Node(float(row[START_X]), float(row[START_Y])))
+
+        if not any(node.x == float(row[END_X]) and node.y == float(row[END_Y]) for node in list_of_nodes):
+            list_of_nodes.append(Node(float(row[END_X]), float(row[END_Y])))
+
+    for node in list_of_nodes:
+        node.neighbors = get_neighbors(node, list_of_nodes, rows)
+    
+    return list_of_nodes
+
+def get_neighbors(current: Node, list_of_nodes, rows):
+    neighbors = []
+    for node in list_of_nodes:
+        if node.x == current.x and node.y == current.y:
+            continue
+        if node.x == current.x or node.y == current.y:
+            neighbors.append([node, current.get_details(node, rows), current.get_distance(node)])
+    return neighbors
+
+def read_map(filename):
+    rows = []
+    with open(filename + '.csv', 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+        next(csvreader)
+        for row in csvreader:
+            rows.append(row)
+    return rows
+
+
+
+
+if __name__ == '__main__':
+    student_number = '993613014'
+    csv_file = input('enter the CSV file please:')
+    json_file = input('enter the JSON file please:')
+    rows = read_map(csv_file)
+
+
+
+
+    
