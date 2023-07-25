@@ -21,8 +21,25 @@ The CSV file should have the following columns:
 6. Road Type (string): Type of the road segment (e.g., 'Highway', 'MainStreet', etc.).
 7. Traffic (int): Traffic level of the road segment (integer value).
 
+ [HERE](map.csv) is an example of the csv file format.
+
 ## JSON File Format
-The JSON file should be like [THIS](start_end.json). Feel free to modify the start and end points.
+ The JSON file should have the following structure:
+ ```
+ {
+  "START": {
+    "X": 0.0,
+    "Y": 0.0
+  },
+  "END": {
+    "X": 10.0,
+    "Y": 10.0
+  }
+}
+```
+Replace the values of "X" and "Y" with the start and end coordinates, respectively.
+
+[HERE](start_end.json) is an  example of JSON file format. Feel free to modify the start and end points.
 
 ## Output
  The output text file will contain the shortest path between the start and end points, considering traffic conditions. Each line in the file represents a road segment along the path.
